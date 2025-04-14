@@ -1,4 +1,4 @@
-// Full React component: Styled Inventory page + shared styles
+// Updated Inventory component with default gear list preload + reset button
 import { useState, useEffect } from "react";
 import "../index.css";
 
@@ -12,10 +12,40 @@ const CASES = {
   ECT: ["Misc"]
 };
 
+const DEFAULT_ITEMS = [
+  { name: "Quarter inches xlrs", quantity: 1, case: "Green", section: "Quarter Inch" },
+  { name: "XLRs 1ft", quantity: 1, case: "Green", section: "XLR" },
+  { name: "XLRs 3ft", quantity: 1, case: "Green", section: "XLR" },
+  { name: "XLRs 6ft", quantity: 1, case: "Green", section: "XLR" },
+  { name: "XLRs 25ft", quantity: 1, case: "Green", section: "XLR" },
+  { name: "XLRs 50ft", quantity: 1, case: "Green", section: "XLR" },
+  { name: "Ethernet cables", quantity: 1, case: "Green", section: "Ethernet" },
+  { name: "HDMI cable", quantity: 1, case: "Green", section: "Media" },
+  { name: "Power cables", quantity: 1, case: "Blue", section: "Power" },
+  { name: "Extension cord", quantity: 1, case: "Blue", section: "Power" },
+  { name: "Power strip", quantity: 1, case: "Blue", section: "Power" },
+  { name: "Long power strip", quantity: 1, case: "Blue", section: "Power" },
+  { name: "Tape", quantity: 1, case: "Black", section: "Tape" },
+  { name: "SM57 drums mic", quantity: 1, case: "Black", section: "Mics" },
+  { name: "SM58 kick mic", quantity: 1, case: "Black", section: "Mics" },
+  { name: "Battery", quantity: 1, case: "Black", section: "Mics" },
+  { name: "Beta 58", quantity: 1, case: "Black", section: "Mics" },
+  { name: "1-channel DI box", quantity: 1, case: "Black", section: "DI Boxes" },
+  { name: "2-channel DI box", quantity: 1, case: "Black", section: "DI Boxes" },
+  { name: "Small clip", quantity: 1, case: "Black", section: "Tools" },
+  { name: "Medium clip", quantity: 1, case: "Black", section: "Tools" },
+  { name: "Large clip", quantity: 1, case: "Black", section: "Tools" },
+  { name: "Clip mics", quantity: 1, case: "Black", section: "Mics" },
+  { name: "Bad SM58", quantity: 1, case: "Black", section: "Mics" },
+  { name: "P16", quantity: 1, case: "Consol", section: "Consol" },
+  { name: "Tall stand", quantity: 1, case: "Tall Black", section: "Stands" },
+  { name: "Boom stand", quantity: 1, case: "Tall Black", section: "Stands" },
+];
+
 const Inventory = () => {
   const [items, setItems] = useState(() => {
     const saved = localStorage.getItem("roadie-inventory");
-    return saved ? JSON.parse(saved) : [];
+    return saved ? JSON.parse(saved) : DEFAULT_ITEMS.map((item, i) => ({ ...item, id: Date.now() + i }));
   });
 
   const [newItem, setNewItem] = useState("");
@@ -53,6 +83,11 @@ const Inventory = () => {
     setSelectedSection(CASES["Blue"][0]);
   };
 
+  const resetInventory = () => {
+    const defaultWithIds = DEFAULT_ITEMS.map((item, i) => ({ ...item, id: Date.now() + i }));
+    setItems(defaultWithIds);
+  };
+
   const deleteItem = (id) => {
     setItems(items.filter(item => item.id !== id));
   };
@@ -86,6 +121,10 @@ const Inventory = () => {
   return (
     <div className="page-wrapper">
       <h2 className="text-2xl font-bold mb-6 text-center">🎚️ Roadie Inventory</h2>
+
+      <div className="text-right mb-4">
+        <button onClick={resetInventory} className="btn">🔁 Reset Inventory</button>
+      </div>
 
       <div className="grid md:grid-cols-5 gap-4 card">
         <input
